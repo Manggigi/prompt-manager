@@ -32,17 +32,20 @@ export default function PromptsPage() {
   }, [user]);
 
   async function loadPrompts() {
+    if (!user) return;
+
     const { data, error } = await supabase
       .from("prompts")
       .select("*")
-      .eq("user_id", user?.id);
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("Error loading prompts:", error);
       return;
     }
 
-    setPrompts(data);
+    setPrompts(data || []);
   }
 
   const sortedAndFilteredPrompts = prompts
